@@ -111,18 +111,9 @@
   header.scrolled{box-shadow:0 12px 30px -18px rgba(0,0,0,.6);border-bottom-color:var(--border);}
   .nav{display:flex;align-items:center;justify-content:space-between;height:76px;}
   .logo{display:flex;align-items:center;gap:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:18px;}
-  .logo-mark{
-    width:30px;height:30px;border-radius:9px;background:var(--grad);
-    display:flex;align-items:center;justify-content:center;flex-shrink:0;
-    position:relative;box-shadow:0 4px 14px -4px rgba(99,102,241,.6);
-  }
-  .logo-mark::after{
-    content:'';position:absolute;inset:6px;border-radius:5px;
-    background:var(--bg);opacity:.85;
-  }
-  .logo-mark::before{
-    content:'';position:absolute;width:5px;height:5px;border-radius:50%;background:#fff;z-index:2;
-    box-shadow:0 0 8px #fff;
+  .logo-mark-img{
+    width:30px;height:30px;flex-shrink:0;object-fit:contain;
+    filter:drop-shadow(0 2px 8px rgba(99,102,241,.5));
   }
   .nav-links{display:flex;gap:34px;align-items:center;}
   .nav-links a{font-size:14.5px;color:var(--text-secondary);transition:color .15s ease;position:relative;}
@@ -307,6 +298,48 @@
 
   @media(max-width:760px){.services-grid{grid-template-columns:1fr;}}
 
+  /* ---------- 12-card services grid (from flyer) ---------- */
+  .services-grid-12{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  .service-card-sm{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);
+    padding:24px;transition:transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+  }
+  .service-card-sm:hover{transform:translateY(-4px);border-color:rgba(99,102,241,.4);box-shadow:0 16px 36px -20px rgba(99,102,241,.45);}
+  .sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .sc-num{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-tertiary);
+    border:1px solid var(--border);border-radius:6px;padding:3px 7px;
+  }
+  .sc-icon{
+    width:36px;height:36px;border-radius:10px;background:var(--grad-soft);border:1px solid rgba(99,102,241,.35);
+    display:flex;align-items:center;justify-content:center;color:var(--text-primary);
+  }
+  .service-card-sm h3{font-size:16px;font-weight:700;line-height:1.35;}
+  .service-card-sm p{margin-top:8px;font-size:13px;color:var(--text-secondary);line-height:1.6;}
+
+  @media(max-width:900px){.services-grid-12{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.services-grid-12{grid-template-columns:1fr;}}
+
+  /* ---------- additional services checklist ---------- */
+  .additional-services{
+    margin-top:22px;background:linear-gradient(120deg, rgba(99,102,241,.1), rgba(236,72,153,.06)), var(--surface);
+    border:1px solid var(--border);border-radius:var(--radius-lg);padding:36px 40px;
+  }
+  .as-head h3{font-size:19px;font-weight:700;margin-bottom:20px;}
+  .as-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;}
+  .as-grid ul{display:flex;flex-direction:column;gap:13px;}
+  .as-grid li{
+    font-size:14px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:10px;line-height:1.4;
+  }
+  .as-grid li::before{
+    content:'';flex-shrink:0;margin-top:5px;width:14px;height:14px;border-radius:50%;
+    background:linear-gradient(135deg,var(--violet),var(--magenta));
+  }
+  .as-grid li span{color:var(--text-tertiary);font-size:12.5px;}
+
+  @media(max-width:850px){.as-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.as-grid{grid-template-columns:1fr;}.additional-services{padding:28px 24px;}}
+
   /* ---------- portfolio ---------- */
   .portfolio-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
   .portfolio-card{
@@ -438,6 +471,7 @@
   footer{border-top:1px solid var(--border-soft);padding:36px 0;}
   .footer-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
   .footer-row .fine{font-size:13px;color:var(--text-tertiary);}
+  .footer-tagline{font-size:12px;color:var(--text-tertiary);margin-top:5px;margin-left:32px;letter-spacing:.04em;}
 
   @media(max-width:850px){.contact-grid{grid-template-columns:1fr;}}
 
