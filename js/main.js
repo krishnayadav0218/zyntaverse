@@ -87,49 +87,48 @@ const io = new IntersectionObserver((entries)=>{
 },{threshold:0.15});
 revealEls.forEach(el=>io.observe(el));
 
-// ---------- hero constellation canvas ----------
-const canvas = document.getElementById('hero-canvas');
-const ctx = canvas.getContext('2d');
-let W,H,nodes=[];
-function resize(){
-  W = canvas.clientWidth; H = canvas.clientHeight;
-  canvas.width = W * devicePixelRatio; canvas.height = H * devicePixelRatio;
-  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+// ---------- video lightbox (showcase reels) ----------
+const lightbox = document.getElementById('video-lightbox');
+const lightboxVideo = document.getElementById('lightbox-video');
+const lightboxClose = document.getElementById('lightbox-close');
+
+function openLightbox(src, poster){
+  lightboxVideo.setAttribute('poster', poster);
+  lightboxVideo.querySelector('source')?.remove();
+  const source = document.createElement('source');
+  source.src = src; source.type = 'video/mp4';
+  lightboxVideo.appendChild(source);
+  lightboxVideo.load();
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  lightboxVideo.play().catch(()=>{});
 }
-function initNodes(){
-  nodes = Array.from({length:34}, ()=>({
-    x:Math.random()*W, y:Math.random()*H,
-    vx:(Math.random()-0.5)*0.28, vy:(Math.random()-0.5)*0.28,
-    r:Math.random()*1.6+1
-  }));
+function closeLightbox(){
+  lightboxVideo.pause();
+  lightbox.classList.remove('open');
+  document.body.style.overflow = '';
 }
-function tick(){
-  ctx.clearRect(0,0,W,H);
-  nodes.forEach(n=>{
-    n.x+=n.vx; n.y+=n.vy;
-    if(n.x<0||n.x>W) n.vx*=-1;
-    if(n.y<0||n.y>H) n.vy*=-1;
-  });
-  for(let i=0;i<nodes.length;i++){
-    for(let j=i+1;j<nodes.length;j++){
-      const a=nodes[i], b=nodes[j];
-      const d = Math.hypot(a.x-b.x, a.y-b.y);
-      if(d<130){
-        ctx.strokeStyle = `rgba(99,102,241,${0.22*(1-d/130)})`;
-        ctx.lineWidth=1;
-        ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
-      }
-    }
-  }
-  nodes.forEach((n,i)=>{
-    ctx.beginPath();
-    ctx.fillStyle = i%3===0 ? '#EC4899' : (i%3===1 ? '#22D3EE' : '#6366F1');
-    ctx.arc(n.x,n.y,n.r,0,Math.PI*2); ctx.fill();
-  });
-  requestAnimationFrame(tick);
-}
-window.addEventListener('resize', ()=>{ resize(); });
-resize(); initNodes(); tick();
+
+document.getElementById('open-showcase-1')?.addEventListener('click', ()=>{
+  openLightbox('assets/video/showcase-ai-ops.mp4', 'assets/video/showcase-ai-ops-poster.jpg');
+});
+document.getElementById('open-showcase-2')?.addEventListener('click', ()=>{
+  openLightbox('assets/video/showcase-dev-workflow.mp4', 'assets/video/showcase-dev-workflow-poster.jpg');
+});
+lightboxClose.addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', (e)=>{ if(e.target === lightbox) closeLightbox(); });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox(); });
+
+// ---------- pause background videos when off-screen (perf) ----------
+document.querySelectorAll('video[autoplay]').forEach(vid=>{
+  const vidIO = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting) vid.play().catch(()=>{});
+      else vid.pause();
+    });
+  }, { threshold:0.1 });
+  vidIO.observe(vid);
+});
 
 // ---------- marquee duplicate for seamless loop ----------
 const track = document.getElementById('marquee-track');
