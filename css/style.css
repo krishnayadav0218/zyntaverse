@@ -146,6 +146,12 @@
     .nav-toggle{display:flex;}
     .mobile-menu{display:flex;}
   }
+  @media(max-width:420px){
+    .logo{font-size:15px;gap:7px;}
+    .logo-mark-img{width:24px;height:24px;}
+    .nav-cta .btn-sm{padding:9px 13px;font-size:12.5px;}
+    .nav-cta{gap:10px;}
+  }
 
   /* ---------- hero ---------- */
   .hero{padding:88px 0 60px;}
@@ -516,6 +522,93 @@
   .footer-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
   .footer-row .fine{font-size:13px;color:var(--text-tertiary);}
   .footer-tagline{font-size:12px;color:var(--text-tertiary);margin-top:5px;margin-left:32px;letter-spacing:.04em;}
+  .footer-links{display:flex;gap:22px;flex-wrap:wrap;}
+  .footer-links a{font-size:13px;color:var(--text-tertiary);transition:color .15s ease;}
+  .footer-links a:hover{color:var(--text-secondary);}
+
+  /* ---------- utility pages (404 / thank-you) ---------- */
+  .utility-page{
+    min-height:calc(100vh - 76px - 100px);display:flex;align-items:center;justify-content:center;
+    padding:100px 24px;text-align:center;
+  }
+  .utility-page-inner{max-width:520px;}
+  .utility-code{
+    font-family:'Plus Jakarta Sans';font-size:15px;font-weight:700;letter-spacing:.08em;
+    color:var(--text-tertiary);margin-bottom:18px;
+  }
+  .utility-page h1{font-size:clamp(30px,4vw,44px);font-weight:800;}
+  .utility-page p{margin-top:16px;font-size:16px;color:var(--text-secondary);line-height:1.6;}
+  .utility-page .btn{margin-top:32px;}
+  .utility-icon{
+    width:72px;height:72px;border-radius:20px;background:var(--grad-soft);border:1px solid rgba(99,102,241,.35);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 28px;
+  }
+
+  /* ---------- legal pages (privacy / terms) ---------- */
+  .legal-page{padding:64px 0 100px;}
+  .legal-page .wrap{max-width:760px;}
+  .legal-page h1{font-size:clamp(28px,3.6vw,40px);font-weight:800;}
+  .legal-updated{font-size:13px;color:var(--text-tertiary);margin-top:10px;}
+  .legal-notice{
+    margin-top:28px;background:var(--surface);border:1px solid rgba(236,72,153,.3);border-radius:var(--radius-md);
+    padding:18px 20px;font-size:13.5px;color:var(--text-secondary);line-height:1.6;
+  }
+  .legal-notice b{color:var(--text-primary);}
+  .legal-body{margin-top:36px;}
+  .legal-body h2{font-size:19px;font-weight:700;margin-top:36px;margin-bottom:12px;color:var(--text-primary);}
+  .legal-body h2:first-child{margin-top:0;}
+  .legal-body p{font-size:15px;color:var(--text-secondary);line-height:1.75;margin-bottom:14px;}
+  .legal-body ul{margin:0 0 14px 0;padding-left:20px;}
+  .legal-body li{font-size:15px;color:var(--text-secondary);line-height:1.75;margin-bottom:6px;list-style:disc;}
+  .legal-body a{color:var(--violet);text-decoration:underline;text-underline-offset:2px;}
+  .legal-placeholder{color:var(--magenta);font-weight:600;}
+
+  /* ---------- sticky mobile CTA bar ---------- */
+  .mobile-cta-bar{
+    display:none;position:fixed;bottom:0;left:0;right:0;z-index:150;
+    background:rgba(11,15,25,.92);backdrop-filter:blur(14px);border-top:1px solid var(--border);
+    padding:12px 16px;gap:10px;
+  }
+  @media(max-width:760px){
+    .mobile-cta-bar{display:flex;}
+    body{padding-bottom:64px;}
+    .copilot-btn{bottom:78px;}
+  }
+  .mobile-cta-bar a{flex:1;text-align:center;}
+  .mobile-cta-bar .btn-icon-only{flex:0 0 auto;width:44px;padding:0;}
+
+  /* ---------- cookie consent banner ---------- */
+  .cookie-banner{
+    position:fixed;left:16px;right:16px;bottom:16px;z-index:250;max-width:480px;
+    background:var(--bg-elevated);border:1px solid var(--border);border-radius:16px;
+    padding:20px;box-shadow:0 24px 60px -18px rgba(0,0,0,.6);
+    display:none;
+  }
+  .cookie-banner.show{display:block;animation:fade-up .4s ease;}
+  .cookie-banner p{font-size:13.5px;color:var(--text-secondary);line-height:1.6;margin-bottom:16px;}
+  .cookie-banner p a{color:var(--violet);text-decoration:underline;}
+  .cookie-banner-actions{display:flex;gap:10px;}
+  @media(max-width:760px){.cookie-banner{bottom:76px;}}
+
+  /* ---------- form field error states ---------- */
+  .field.has-error input,.field.has-error textarea{border-color:var(--magenta);}
+  .field-error{display:none;font-size:12.5px;color:#FB7185;margin-top:6px;}
+  .field.has-error .field-error{display:block;}
+
+  /* ---------- button loading state ---------- */
+  .btn.is-loading{pointer-events:none;opacity:.85;}
+  .btn .btn-spinner{
+    display:none;width:15px;height:15px;border-radius:50%;
+    border:2px solid rgba(255,255,255,.35);border-top-color:#fff;
+    animation:spin .7s linear infinite;
+  }
+  .btn.is-loading .btn-spinner{display:inline-block;}
+  .btn.is-loading .btn-label-text{display:none;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .form-status{font-size:13.5px;margin-top:10px;display:none;}
+  .form-status.show{display:block;}
+  .form-status.success{color:#4ADE80;}
+  .form-status.error{color:#FB7185;}
 
   @media(max-width:850px){.contact-grid{grid-template-columns:1fr;}}
 
