@@ -232,3 +232,186 @@ document.querySelectorAll('.copilot-quick button').forEach(b=>{
     copBody.scrollTop = copBody.scrollHeight;
   });
 });
+
+// ---------- form helpers: validation, loading state, FormSubmit AJAX ----------
+// NOTE: Forms POST to FormSubmit.co using the address in FORM_EMAIL below.
+// The first submission to a new address triggers a one-time confirmation
+// email from FormSubmit that must be approved before messages deliver.
+const FORM_EMAIL = 'zyntaversetechnologies@gmail.com';
+
+function setFieldError(fieldEl, show){
+  fieldEl.classList.toggle('has-error', show);
+}
+function isValidEmail(v){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+}
+function setBtnLoading(btn, loading){
+  btn.classList.toggle('is-loading', loading);
+}
+function showStatus(el, message, type){
+  el.textContent = message;
+  el.className = 'form-status show ' + type;
+}
+
+// ---------- main contact form ----------
+const contactForm = document.getElementById('contact-form');
+if (contactForm) {
+  const nameField = document.getElementById('cf-name-field');
+  const emailField = document.getElementById('cf-email-field');
+  const msgField = document.getElementById('cf-message-field');
+  const submitBtn = document.getElementById('contact-submit');
+  const statusEl = document.getElementById('contact-form-status');
+
+  contactForm.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const name = document.getElementById('cf-name').value.trim();
+    const email = document.getElementById('cf-email').value.trim();
+    const message = document.getElementById('cf-message').value.trim();
+
+    let valid = true;
+    setFieldError(nameField, name.length === 0); if(name.length===0) valid = false;
+    setFieldError(emailField, !isValidEmail(email)); if(!isValidEmail(email)) valid = false;
+    setFieldError(msgField, message.length === 0); if(message.length===0) valid = false;
+    if (!valid) return;
+
+    setBtnLoading(submitBtn, true);
+    statusEl.className = 'form-status';
+
+    try {
+      const fileInput = document.getElementById('file-upload');
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('email', email);
+      formData.append('message', message);
+      formData.append('_subject', `New project inquiry from ${name}`);
+      formData.append('_captcha', 'false');
+      formData.append('_template', 'table');
+      if (fileInput.files[0]) formData.append('attachment', fileInput.files[0]);
+
+      const res = await fetch(`https://formsubmit.co/ajax/${FORM_EMAIL}`, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: formData
+      });
+      if (!res.ok) throw new Error('Request failed');
+
+      contactForm.reset();
+      window.location.href = 'thank-you.html';
+    } catch (err) {
+      setBtnLoading(submitBtn, false);
+      showStatus(statusEl, "Something went wrong sending that — please email us directly instead.", 'error');
+    }
+  });
+
+  // clear error state as user types
+  ['cf-name','cf-email','cf-message'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', (e)=>{
+      e.target.closest('.field').classList.remove('has-error');
+    });
+  });
+
+  // show chosen filename in the drop label
+  const fileInput = document.getElementById('file-upload');
+  const fileDropLabel = document.getElementById('file-drop-label');
+  fileInput.addEventListener('change', ()=>{
+    if (fileInput.files[0]) {
+      fileDropLabel.childNodes[0].textContent = fileInput.files[0].name;
+    }
+  });
+}
+
+// ---------- calculator lead form ----------
+const calcSubmitBtn = document.getElementById('calc-lead-submit');
+if (calcSubmitBtn) {
+  const calcNameField = document.getElementById('calc-name-field');
+  const calcEmailField = document.getElementById('calc-email-field');
+  const calcStatus = document.getElementById('calc-lead-status');
+
+  calcSubmitBtn.addEventListener('click', async ()=>{
+    const name = document.getElementById('calc-name').value.trim();
+    const email = document.getElementById('calc-email').value.trim();
+
+    let valid = true;
+    setFieldError(calcNameField, name.length === 0); if(name.length===0) valid = false;
+    setFieldError(calcEmailField, !isValidEmail(email)); if(!isValidEmail(email)) valid = false;
+    if (!valid) return;
+
+    setBtnLoading(calcSubmitBtn, true);
+    calcStatus.className = 'form-status';
+
+    try {
+      const estimate = document.getElementById('calc-cost').textContent;
+      const timeframe = document.getElementById('calc-time').textContent;
+      const summary = document.getElementById('calc-summary').textContent;
+
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('email', email);
+      formData.append('estimate', estimate);
+      formData.append('timeframe', timeframe);
+      formData.append('project_summary', summary);
+      formData.append('_subject', `New scope estimate request from ${name}`);
+      formData.append('_captcha', 'false');
+      formData.append('_template', 'table');
+
+      const res = await fetch(`https://formsubmit.co/ajax/${FORM_EMAIL}`, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: formData
+      });
+      if (!res.ok) throw new Error('Request failed');
+
+      setBtnLoading(calcSubmitBtn, false);
+      showStatus(calcStatus, "Sent! We'll follow up at that email shortly.", 'success');
+      document.getElementById('calc-name').value = '';
+      document.getElementById('calc-email').value = '';
+    } catch (err) {
+      setBtnLoading(calcSubmitBtn, false);
+      showStatus(calcStatus, "Something went wrong — please try again or email us directly.", 'error');
+    }
+  });
+
+  ['calc-name','calc-email'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', (e)=>{
+      e.target.closest('.field').classList.remove('has-error');
+    });
+  });
+}
+
+// ---------- cookie consent + conditional analytics ----------
+(function(){
+  const banner = document.getElementById('cookie-banner');
+  const acceptBtn = document.getElementById('cookie-accept');
+  const declineBtn = document.getElementById('cookie-decline');
+  if (!banner) return;
+
+  function loadAnalytics(){
+    const id = window.__GA_MEASUREMENT_ID__;
+    if (!id || id.indexOf('XXXX') !== -1) return; // placeholder not yet replaced
+    const s1 = document.createElement('script');
+    s1.async = true;
+    s1.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
+    document.head.appendChild(s1);
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ window.dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', id);
+  }
+
+  const consent = localStorage.getItem('zv_cookie_consent');
+  if (consent === 'accepted') {
+    loadAnalytics();
+  } else if (consent !== 'declined') {
+    banner.classList.add('show');
+  }
+
+  acceptBtn.addEventListener('click', ()=>{
+    localStorage.setItem('zv_cookie_consent', 'accepted');
+    banner.classList.remove('show');
+    loadAnalytics();
+  });
+  declineBtn.addEventListener('click', ()=>{
+    localStorage.setItem('zv_cookie_consent', 'declined');
+    banner.classList.remove('show');
+  });
+})();
